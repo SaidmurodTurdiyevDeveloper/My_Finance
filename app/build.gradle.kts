@@ -71,24 +71,13 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
 
-    val voyagerVersion = "1.1.0-beta02"
-
-    // Multiplatform
-
-    // Navigator
     implementation(libs.voyager.navigator)
-
-    // Screen Model
     implementation(libs.voyager.screenmodel)
-
-    // BottomSheetNavigator
     implementation(libs.voyager.bottom.sheet.navigator)
-
-    // TabNavigator
     implementation(libs.voyager.tab.navigator)
-
-    // Transitions
     implementation(libs.voyager.transitions)
-    // Hilt integration
     implementation(libs.voyager.hilt)
+    implementation(libs.gson)
+
+
 }

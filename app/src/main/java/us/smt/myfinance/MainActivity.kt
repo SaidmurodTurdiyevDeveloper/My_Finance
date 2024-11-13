@@ -4,20 +4,30 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
-import us.smt.myfinance.ui.screen.auth.login.LoginPage
+import androidx.compose.runtime.LaunchedEffect
+import cafe.adriel.voyager.navigator.CurrentScreen
+import cafe.adriel.voyager.navigator.Navigator
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import us.smt.myfinance.ui.screen.splash.SplashScreen
 import us.smt.myfinance.ui.theme.MyFinanceTheme
+import us.smt.myfinance.ui.utils.AppNavigator
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             MyFinanceTheme {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    LoginPage()
+                Navigator(SplashScreen()) { navigate ->
+                    LaunchedEffect(Unit) {
+                        AppNavigator.navigatorState.onEach {
+                            it.invoke(navigate)
+                        }.launchIn(this)
+                    }
+                    CurrentScreen()
                 }
             }
         }

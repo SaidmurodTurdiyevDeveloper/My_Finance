@@ -1,39 +1,40 @@
-package us.smt.myfinance.ui.screen.auth.login
+package us.smt.myfinance.ui.screen.auth.authentification
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
-import us.smt.myfinance.ui.screen.auth.authentification.RegistrationIntent
 import us.smt.myfinance.ui.screen.auth.view.textview.LoginTextView
 import us.smt.myfinance.ui.screen.auth.view.textview.PassWordTextField
+import us.smt.myfinance.ui.screen.auth.view.textview.SimpleTextView
 
-class LoginScreen : Screen {
+class RegistrationScreen : Screen {
     @Composable
     override fun Content() {
-        val viewModel = getViewModel<LoginViewModel>()
+        val viewModel = getViewModel<RegistrationViewModel>()
         val state by viewModel.state.collectAsState()
-        LoginPage(
+        RegistrationScreen(
             state = state,
             onAction = viewModel::onAction
         )
@@ -42,64 +43,77 @@ class LoginScreen : Screen {
 }
 
 @Composable
-private fun LoginPage(
-    state: LoginState,
-    onAction: (LoginIntent) -> Unit
+private fun RegistrationScreen(
+    state: RegistrationState,
+    onAction: (RegistrationIntent) -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White),
-        contentAlignment = Alignment.Center
+            .background(Color.White)
     ) {
+        IconButton(
+            onClick = { onAction(RegistrationIntent.Back) },
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .offset(y = 16.dp)
+                .padding(16.dp)
+        ) {
+            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth(0.8f)
-                .padding(16.dp),
+                .padding(16.dp)
+                .align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Text(
-                text = "Login",
+                text = "Registration",
                 style = MaterialTheme.typography.headlineLarge,
                 color = Color.Black,
                 fontSize = 28.sp,
                 modifier = Modifier.padding(bottom = 32.dp)
             )
-
+            SimpleTextView(
+                state = state.name,
+                hint = "Name",
+                onChange = { name -> onAction(RegistrationIntent.NameChanged(name)) }
+            )
+            SimpleTextView(
+                state = state.surname,
+                hint = "Surname",
+                onChange = { surname -> onAction(RegistrationIntent.LastNameChanged(surname)) }
+            )
             LoginTextView(
                 state = state.email,
-                onChange = { email -> onAction(LoginIntent.EmailChanged(email)) }
+                onChange = { email -> onAction(RegistrationIntent.EmailChanged(email)) }
             )
-
             PassWordTextField(
                 state = state.password,
-                onChange = { password -> onAction(LoginIntent.PasswordChanged(password)) }
+                onChange = { password -> onAction(RegistrationIntent.PasswordChanged(password)) }
+            )
+            PassWordTextField(
+                state = state.confirmPassword,
+                onChange = { password -> onAction(RegistrationIntent.RePasswordChanged(password)) }
             )
             Button(
                 onClick = {
-                    onAction(LoginIntent.Login)
+                    onAction(RegistrationIntent.Register)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 16.dp)
             ) {
-                Text("Login", fontSize = 18.sp)
-            }
-            TextButton(
-                onClick = {
-                    onAction(LoginIntent.OpenRegistration)
-                }
-            ) {
-                Text("Don't have an account? Register")
+                Text("Register", fontSize = 18.sp)
             }
         }
     }
-
 }
 
 @Preview
 @Composable
-private fun LoginPagePrev() {
-    LoginPage(LoginState()) {}
+private fun RegistrationScreenPrev() {
+    RegistrationScreen(RegistrationState()) {}
 }

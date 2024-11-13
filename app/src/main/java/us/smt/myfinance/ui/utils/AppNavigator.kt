@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 typealias NavigationArgs = cafe.adriel.voyager.navigator.Navigator.() -> Unit
 
-class Navigator @Inject constructor() {
+class AppNavigator @Inject constructor() {
     companion object {
         private val _navigatorState = MutableSharedFlow<NavigationArgs>()
         val navigatorState = _navigatorState.asSharedFlow()
