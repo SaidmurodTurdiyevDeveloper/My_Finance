@@ -1,6 +1,5 @@
 package us.smt.myfinance.ui.screen.setting.setting_tab
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -29,8 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,7 +35,6 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import us.smt.myfinance.R
 
 object SettingTab : Tab {
     private fun readResolve(): Any = SettingTab
@@ -72,15 +68,14 @@ private fun ProfileScreen(
             .padding(top = 80.dp, bottom = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
+        Icon(
+            imageVector = Icons.Default.Person,
             contentDescription = "Profile Image",
-            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(120.dp)
                 .background(Color.Gray, CircleShape)
                 .padding(2.dp)
-                .background(Color.White, CircleShape)
+                .background(Color.Cyan, CircleShape)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
