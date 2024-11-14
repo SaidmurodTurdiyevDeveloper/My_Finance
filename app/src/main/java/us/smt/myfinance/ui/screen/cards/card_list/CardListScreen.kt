@@ -25,7 +25,6 @@ class CardListScreen : Screen {
     override fun Content() {
         val viewModel = getViewModel<CardListViewModel>()
         val state by viewModel.state.collectAsState()
-
         CreditCardListScreen(state = state, onAction = viewModel::onAction)
     }
 }
@@ -40,7 +39,7 @@ private fun CreditCardListScreen(
         topBar = {
             TopAppBar(title = { Text("Credit Cards") }, navigationIcon = {
                 IconButton(
-                    onClick = {},
+                    onClick = { onAction(CardListIntent.Back) },
                     content = { Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back") }
                 )
             })

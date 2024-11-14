@@ -4,5 +4,6 @@ data class CreditCard(
     val cardHolderName: String,
     val cardNumber: String,
     val expiryDate: String,
-    val cardProviderImage: Int // Image resource ID for the card provider logo
+    val money:Int,
+    val cvv: String
 )

@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Card
@@ -28,6 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -43,6 +45,7 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import us.smt.myfinance.ui.dialog.CreateCostDialog
 
 object HomeTab : Tab {
     private fun readResolve(): Any = HomeTab
@@ -74,9 +77,12 @@ private fun PaymentHomeScreen(
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { },
-                modifier = Modifier
-                    .padding(16.dp)
+                onClick = {
+                    onAction(HomeIntent.OpenDialog)
+                },
+                containerColor = Color(0xFF6200EE), // FAB Color
+                contentColor = Color.White,
+                modifier = Modifier.padding(16.dp)
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Expense")
             }
@@ -98,8 +104,11 @@ private fun PaymentHomeScreen(
             ) {
                 Text(
                     text = "My Finance",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black // Title Color
+                    )
                 )
             }
 
@@ -136,29 +145,51 @@ private fun PaymentHomeScreen(
             )
 
             val debtsList = listOf(
-                "Kredit karta: 200,000 so'm",
+                "Mansurdan qarzim: 200,000 so'm",
                 "Avtokredit: 500,000 so'm",
                 "Ipoteka: 1,000,000 so'm"
             )
 
-            val expensesList = listOf(
-                "Oziq-ovqat:" to "50,000 so'm",
-                "Transport:" to "10,000 so'm",
-                "Kafedra:" to "20,000 so'm"
-            )
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp), contentPadding = PaddingValues(vertical = 16.dp)) {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(vertical = 16.dp)
+            ) {
                 item {
                     FinancialSection(title = "Oxirgi oylik xarajatlar", amount = state.allCosts.ifBlank { "0" })
-                    FinancialSection(title = "Barcha qarzlar", amount = state.allOwe.ifBlank { "0" })
+                    FinancialSection(title = "Sizning qarz holatinigiz", amount = state.allOwe.ifBlank { "0" })
                     FinancialSection(title = "Umumiy jamg'arma balansi", amount = state.allFunds.ifBlank { "0" })
 
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = "Jamg'armalar",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically
+                    ) {
+
+                        Text(
+                            text = "Jamg'armalar",
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF6200EE) // Section Title Color
+                            )
+                        )
+                        TextButton(
+                            onClick = { onAction(HomeIntent.OpenFound) },
+                            content = {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+
+                                        text = "All",
+                                        style = MaterialTheme.typography.titleMedium.copy(
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color(0xFF6200EE) // Section Title Color
+                                        )
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
+                                }
+                            })
+                    }
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         items(savingsList) { saving ->
                             FinancialCardItem(name = saving)
@@ -169,8 +200,10 @@ private fun PaymentHomeScreen(
 
                     Text(
                         text = "To'lanishi kerak bo'lgan qarzlar va kreditlar",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF6200EE) // Section Title Color
+                        ),
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -181,19 +214,30 @@ private fun PaymentHomeScreen(
                     Spacer(modifier = Modifier.height(24.dp))
                     Text(
                         text = "Bugungi xarajatlar",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF6200EE) // Section Title Color
+                        ),
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                 }
-                items(expensesList) { expense ->
-                    FinancialSection(title = expense.first, amount = expense.second)
+                items(state.costs) { expense ->
+                    FinancialSection(title = expense.name, amount = expense.amount.toString().ifBlank { "0" })
                 }
             }
         }
     }
-
+    if (state.isOpenDialog) {
+        CreateCostDialog(
+            onDismiss = {
+                onAction(HomeIntent.CloseDialog)
+            },
+            onAddItem = { name, money ->
+                onAction(HomeIntent.AddCost(money, name))
+            }
+        )
+    }
 }
 
 @Composable
@@ -203,8 +247,20 @@ fun FinancialSection(title: String, amount: String) {
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
-        Text(text = title, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
-        Text(text = amount, style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
+        Text(
+            text = title,
+            style = MaterialTheme.typography.bodyLarge.copy(
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF000000) // Section Title Color
+            )
+        )
+        Text(
+            text = amount,
+            style = MaterialTheme.typography.bodyMedium.copy(
+                color = Color.Gray,
+                fontSize = 14.sp // Change the font size for amount
+            )
+        )
     }
 }
 
@@ -223,7 +279,12 @@ fun FinancialCardItem(name: String) {
                 .padding(16.dp)
         ) {
             Column(verticalArrangement = Arrangement.Center) {
-                Text(text = name, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    text = name,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF000000) // Card Text Color
+                )
             }
         }
     }

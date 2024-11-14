@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -21,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import us.smt.myfinance.R
 import us.smt.myfinance.domen.model.CreditCard
 
 @Composable
@@ -37,7 +39,7 @@ fun CreditCardItem(card: CreditCard) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = card.cardProviderImage),
+                painter = painterResource(id = R.drawable.credit_card),
                 contentDescription = "Card Provider Logo",
                 modifier = Modifier.size(40.dp)
             )
@@ -57,6 +59,12 @@ fun CreditCardItem(card: CreditCard) {
                     text = "Exp: ${card.expiryDate}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Balance: ${card.money}",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.Black
                 )
             }
         }

@@ -1,6 +1,6 @@
 package us.smt.myfinance.ui.screen.payments.payment_tab
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,21 +9,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -51,26 +48,26 @@ object PaymentTab : Tab {
 @Composable
 private fun CommunalScreen() {
     val paymentsList = listOf(
-        "Elektr energiyasi" to Icons.Default.Warning,
-        "Internet to'lovlari" to Icons.Default.Warning,
-        "Gaz to'lovlari" to Icons.Default.Warning,
-        "Suv to'lovlari" to Icons.Default.Warning,
-        "Elektr energiyasi" to Icons.Default.Warning,
-        "Internet to'lovlari" to Icons.Default.Warning,
-        "Gaz to'lovlari" to Icons.Default.Warning,
-        "Suv to'lovlari" to Icons.Default.Warning,
-        "Elektr energiyasi" to Icons.Default.Warning,
-        "Internet to'lovlari" to Icons.Default.Warning,
-        "Gaz to'lovlari" to Icons.Default.Warning,
-        "Suv to'lovlari" to Icons.Default.Warning,
-        "Elektr energiyasi" to Icons.Default.Warning,
-        "Internet to'lovlari" to Icons.Default.Warning,
-        "Gaz to'lovlari" to Icons.Default.Warning,
-        "Suv to'lovlari" to Icons.Default.Warning,
-        "Elektr energiyasi" to Icons.Default.Warning,
-        "Internet to'lovlari" to Icons.Default.Warning,
-        "Gaz to'lovlari" to Icons.Default.Warning,
-        "Suv to'lovlari" to Icons.Default.Warning,
+        "Elektr energiyasi" to R.drawable.electr_energy,
+        "Internet to'lovlari" to R.drawable.electr_energy,
+        "Gaz to'lovlari" to R.drawable.electr_energy,
+        "Suv to'lovlari" to R.drawable.electr_energy,
+        "Elektr energiyasi" to R.drawable.electr_energy,
+        "Internet to'lovlari" to R.drawable.electr_energy,
+        "Gaz to'lovlari" to R.drawable.electr_energy,
+        "Suv to'lovlari" to R.drawable.electr_energy,
+        "Elektr energiyasi" to R.drawable.electr_energy,
+        "Internet to'lovlari" to R.drawable.electr_energy,
+        "Gaz to'lovlari" to R.drawable.electr_energy,
+        "Suv to'lovlari" to R.drawable.electr_energy,
+        "Elektr energiyasi" to R.drawable.electr_energy,
+        "Internet to'lovlari" to R.drawable.electr_energy,
+        "Gaz to'lovlari" to R.drawable.electr_energy,
+        "Suv to'lovlari" to R.drawable.electr_energy,
+        "Elektr energiyasi" to R.drawable.electr_energy,
+        "Internet to'lovlari" to R.drawable.electr_energy,
+        "Gaz to'lovlari" to R.drawable.electr_energy,
+        "Suv to'lovlari" to R.drawable.electr_energy,
     )
 
 
@@ -94,17 +91,19 @@ private fun CommunalScreen() {
 }
 
 @Composable
-fun CommunalItem(payment: Pair<String, ImageVector>, onClick: () -> Unit) {
-    Card(modifier = Modifier
-        .fillMaxWidth()
-        .padding(8.dp)
-        .clickable { onClick() },
-        colors = CardDefaults.cardColors(containerColor =  Color(0xFFBCE1F6))) {
+fun CommunalItem(payment: Pair<String, Int>, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .clickable { onClick() },
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFFFF))
+    ) {
         Row(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(imageVector = payment.second, contentDescription = null)
+            Image(modifier = Modifier.size(40.dp), painter = painterResource(payment.second), contentDescription = null)
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text =
