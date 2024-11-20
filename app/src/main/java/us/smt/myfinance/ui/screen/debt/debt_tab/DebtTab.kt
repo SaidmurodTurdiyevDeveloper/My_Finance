@@ -76,25 +76,50 @@ private fun DebtOweScreen(
                 onClick = {
                     onAction(DebtIntent.OpenDebt)
                 },
-                content = {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add",
-                        tint = Color.Black
-                    )
-                }
-            )
+                containerColor = Color(0xFF6200EE), // FAB rangini ko'k qildik
+                contentColor = Color.White // FAB ustidagi ikon rangini oq qildik
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add"
+                )
+            }
         }
     ) { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .background(Color(0xFFF5F5F5)) // Butun ekranning fon rangini och kul rang qildik
+        ) {
             // Tabs
-            TabRow(selectedTabIndex = selectedTab) {
-                Tab(selected = selectedTab == 0, onClick = { selectedTab = 0 }) {
-                    Text("My Debts", modifier = Modifier.padding(16.dp))
-                }
-                Tab(selected = selectedTab == 1, onClick = { selectedTab = 1 }) {
-                    Text("They Owe", modifier = Modifier.padding(16.dp))
-                }
+            TabRow(
+                selectedTabIndex = selectedTab,
+                containerColor = Color.White, // Tabning fon rangini oq qildik
+                indicator = {} // Indikatorni olib tashladik
+            ) {
+                Tab(
+                    selected = selectedTab == 0,
+                    onClick = { selectedTab = 0 },
+                    text = {
+                        Text(
+                            "My Debts",
+                            modifier = Modifier.padding(16.dp),
+                            color = if (selectedTab == 0) Color(0xFF6200EE) else Color.Gray // Tanlangan tabning rangini ko'k qildik, boshqasini kulrang
+                        )
+                    }
+                )
+                Tab(
+                    selected = selectedTab == 1,
+                    onClick = { selectedTab = 1 },
+                    text = {
+                        Text(
+                            "They Owe",
+                            modifier = Modifier.padding(16.dp),
+                            color = if (selectedTab == 1) Color(0xFF6200EE) else Color.Gray // Tanlangan tabning rangini ko'k qildik, boshqasini kulrang
+                        )
+                    }
+                )
             }
 
             // Content
@@ -106,7 +131,8 @@ private fun DebtOweScreen(
     }
 
     if (state.isOpenDialog) {
-        CreateDebtOweDialog(onDismiss = { onAction(DebtIntent.CloseDebt) },
+        CreateDebtOweDialog(
+            onDismiss = { onAction(DebtIntent.CloseDebt) },
             onAddItem = { name, money, untilTime ->
                 if (selectedTab == 0) {
                     onAction(
@@ -129,7 +155,8 @@ private fun DebtOweScreen(
                         )
                     )
                 }
-            })
+            }
+        )
     }
 }
 
@@ -144,7 +171,7 @@ private fun DebtList(debts: List<DebtOweData>) {
     ) {
         Text(
             text = "Total Debt: $$totalDebt",
-            fontSize = 18.sp,
+            fontSize = 20.sp, // Font o'lchamini kattalashtirdik
             fontWeight = FontWeight.Bold,
             color = Color.Black,
             modifier = Modifier.padding(bottom = 16.dp)
@@ -169,7 +196,7 @@ private fun OweList(owes: List<DebtOweData>) {
     ) {
         Text(
             text = "Total Owe: $$totalOwe",
-            fontSize = 18.sp,
+            fontSize = 20.sp, // Font o'lchamini kattalashtirdik
             fontWeight = FontWeight.Bold,
             color = Color.Black,
             modifier = Modifier.padding(bottom = 16.dp)
@@ -185,12 +212,14 @@ private fun OweList(owes: List<DebtOweData>) {
 @Composable
 private fun DebtOweCard(item: DebtOweData) {
     Card(
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(12.dp), // Kartaning burchaklarini yumaloqladik
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .background(Color.White),
-        elevation = CardDefaults.cardElevation(4.dp)
+            .padding(vertical = 8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White // Kartaning fon rangini oq qildik
+        ),
+        elevation = CardDefaults.cardElevation(6.dp) // Ko'tarilishni oshirdik
     ) {
         Column(
             modifier = Modifier
@@ -199,25 +228,26 @@ private fun DebtOweCard(item: DebtOweData) {
         ) {
             Text(
                 text = "Amount: $${item.amount}",
-                fontSize = 16.sp,
+                fontSize = 18.sp, // Font o'lchamini kattalashtirdik
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = "Owner: ${item.ownerName}",
-                fontSize = 14.sp,
+                fontSize = 16.sp,
                 color = Color.Gray
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = "Final Date: ${item.finalDate}",
-                fontSize = 14.sp,
+                fontSize = 16.sp,
                 color = Color.Gray
             )
         }
     }
 }
+
 
 @Preview
 @Composable

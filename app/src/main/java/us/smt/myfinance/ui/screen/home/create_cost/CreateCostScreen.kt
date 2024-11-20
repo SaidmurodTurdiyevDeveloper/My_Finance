@@ -1,4 +1,4 @@
-package us.smt.myfinance.ui.screen.cards.add_credit_card
+package us.smt.myfinance.ui.screen.home.create_cost
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -30,36 +30,38 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import us.smt.myfinance.ui.utils.TextFieldData
 
-class AddCardScreen : Screen {
+class CreateCostScreen : Screen {
     @Composable
     override fun Content() {
-        val viewModel = getViewModel<AddCardViewModel>()
+        val viewModel = getViewModel<CreateCostViewModel>()
         val state by viewModel.state.collectAsState()
-        AddCardScreenContent(state = state, onAction = viewModel::onAction)
+        CreateCostScreenContent(
+            state = state,
+            onAction = viewModel::onAction
+        )
     }
 }
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun AddCardScreenContent(state: AddCardState, onAction: (AddCardIntent) -> Unit) {
+private fun CreateCostScreenContent(state: CreateCostState, onAction: (CreateCostIntent) -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Add New Card") },
+                title = { Text(text = "Add New Cost") },
                 navigationIcon = {
-                    IconButton(onClick = { onAction(AddCardIntent.Back) }) {
+                    IconButton(onClick = { onAction(CreateCostIntent.Back) }) {
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF1E88E5), // Blue color for the app bar
+                    containerColor = Color(0xFF6200EE), // Blue color for the app bar
                     titleContentColor = Color.White,
                     navigationIconContentColor = Color.White
                 )
@@ -76,37 +78,30 @@ private fun AddCardScreenContent(state: AddCardState, onAction: (AddCardIntent) 
             ) {
                 // Card Number Input
                 SimpleTextView(
-                    hint = "Card Number",
-                    state = state.cardNumber,
-                    onChange = { cardNumber -> onAction(AddCardIntent.ChangeCardNumber(cardNumber)) },
+                    hint = "Cost name",
+                    state = state.costType,
+                    onChange = { cardNumber -> onAction(CreateCostIntent.ChangeType(cardNumber)) },
                     textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 SimpleTextView(
-                    hint = "Cardholder Name",
-                    state = state.cardHolderName,
-                    onChange = { cardHolderName -> onAction(AddCardIntent.ChangeCardHolderName(cardHolderName)) },
+                    hint = "Cost amount",
+                    state = state.cost,
+                    onChange = { cardHolderName -> onAction(CreateCostIntent.ChangeAmount(cardHolderName)) },
                     textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 SimpleTextView(
-                    hint = "Expiration Date",
-                    state = state.expirationDate,
-                    onChange = { expirationDate -> onAction(AddCardIntent.ChangeExpirationDate(expirationDate)) },
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black)
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                SimpleTextView(
-                    hint = "CVV",
-                    state = state.cvv,
-                    onChange = { cvv -> onAction(AddCardIntent.ChangeCvv(cvv)) },
+                    hint = "Description",
+                    state = state.description,
+                    onChange = { expirationDate -> onAction(CreateCostIntent.ChangeDescription(expirationDate)) },
                     textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black)
                 )
 
                 // Save Button
                 Button(
-                    onClick = { onAction(AddCardIntent.Save) },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1E88E5)), // Blue color for the button
+                    onClick = { onAction(CreateCostIntent.AddCost) },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE)), // Blue color for the button
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 16.dp)
@@ -114,7 +109,7 @@ private fun AddCardScreenContent(state: AddCardState, onAction: (AddCardIntent) 
                     shape = RoundedCornerShape(12.dp) // Rounded corners for the button
                 ) {
                     Text(
-                        text = "Save Card",
+                        text = "Save",
                         style = MaterialTheme.typography.bodyLarge.copy(color = Color.White, fontWeight = FontWeight.Bold)
                     )
                 }
@@ -124,7 +119,7 @@ private fun AddCardScreenContent(state: AddCardState, onAction: (AddCardIntent) 
 }
 
 @Composable
-fun SimpleTextView(
+private fun SimpleTextView(
     hint: String,
     state: TextFieldData,
     onChange: (String) -> Unit,
@@ -140,16 +135,7 @@ fun SimpleTextView(
         shape = RoundedCornerShape(12.dp),
         colors = TextFieldDefaults.colors(
             unfocusedLabelColor = Color.Gray,
-            cursorColor = Color(0xFF1E88E5)
+            cursorColor = Color(0xFF6200EE)
         )
     )
-}
-
-
-@Preview(showBackground = true)
-@Composable
-private fun AddCardScreenPreview() {
-    MaterialTheme {
-        AddCardScreenContent(state = AddCardState(), onAction = {})
-    }
 }

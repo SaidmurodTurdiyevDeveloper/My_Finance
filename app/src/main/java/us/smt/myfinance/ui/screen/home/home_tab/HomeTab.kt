@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -39,13 +40,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
+import cafe.adriel.voyager.core.lifecycle.LifecycleEffectOnce
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import us.smt.myfinance.ui.dialog.CreateCostDialog
+import us.smt.myfinance.R
+import us.smt.myfinance.domen.model.DebtOweData
+import us.smt.myfinance.domen.model.FundData
 
 object HomeTab : Tab {
     private fun readResolve(): Any = HomeTab
@@ -57,11 +63,14 @@ object HomeTab : Tab {
             icon = rememberVectorPainter(Icons.Default.Home)
         )
 
+    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
         val viewmodel = getViewModel<HomeViewModel>()
         val state by viewmodel.state.collectAsState()
-
+        LifecycleEffectOnce {
+            viewmodel.onAction(HomeIntent.Init)
+        }
         PaymentHomeScreen(
             state = state,
             onAction = viewmodel::onAction
@@ -77,167 +86,156 @@ private fun PaymentHomeScreen(
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {
-                    onAction(HomeIntent.OpenDialog)
-                },
+                onClick = { onAction(HomeIntent.OpenAddCost) },
                 containerColor = Color(0xFF6200EE), // FAB Color
                 contentColor = Color.White,
                 modifier = Modifier.padding(16.dp)
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Expense")
             }
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .background(Color(0xFFF2F4F6))
-                .padding(horizontal = 16.dp)
-        ) {
-            Row(
+        },
+        content = { padding ->
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                    .fillMaxSize()
+                    .padding(padding)
+                    .background(Color(0xFFF2F4F6))
+                    .padding(horizontal = 16.dp)
             ) {
-                Text(
-                    text = "My Finance",
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black // Title Color
-                    )
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(interactionSource = remember { MutableInteractionSource() }, indication = ripple()) {
-                        onAction(HomeIntent.GetTransactions)
-                    }
-                    .background(Color(0xFF5E92F3), shape = RoundedCornerShape(12.dp))
-                    .padding(24.dp)
-            ) {
-                Column(horizontalAlignment = Alignment.Start) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
-                        text = state.balance.ifBlank { "0" },
-                        color = Color.White,
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "Cards All Balance",
-                        color = Color.White.copy(alpha = 0.7f),
-                        fontSize = 16.sp
+                        text = "My Finance",
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black // Title Color
+                        )
                     )
                 }
-            }
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            val savingsList = listOf(
-                "Favqulodda holatlar: 400,000 so'm",
-                "Ta'til: 300,000 so'm",
-                "Ta'lim: 300,000 so'm"
-            )
-
-            val debtsList = listOf(
-                "Mansurdan qarzim: 200,000 so'm",
-                "Avtokredit: 500,000 so'm",
-                "Ipoteka: 1,000,000 so'm"
-            )
-
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(vertical = 16.dp)
-            ) {
-                item {
-                    FinancialSection(title = "Oxirgi oylik xarajatlar", amount = state.allCosts.ifBlank { "0" })
-                    FinancialSection(title = "Sizning qarz holatinigiz", amount = state.allOwe.ifBlank { "0" })
-                    FinancialSection(title = "Umumiy jamg'arma balansi", amount = state.allFunds.ifBlank { "0" })
-
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically
-                    ) {
-
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = ripple()
+                        ) { onAction(HomeIntent.GetTransactions) }
+                        .background(Color(0xFF5E92F3), shape = RoundedCornerShape(12.dp))
+                        .padding(24.dp)
+                ) {
+                    Column(horizontalAlignment = Alignment.Start) {
                         Text(
-                            text = "Jamg'armalar",
+                            text = state.balance.ifBlank { "0" },
+                            color = Color.White,
+                            fontSize = 32.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = "Cards All Balance",
+                            color = Color.White.copy(alpha = 0.7f),
+                            fontSize = 16.sp
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(vertical = 16.dp)
+                ) {
+                    item {
+                        FinancialSection(title = stringResource(R.string.last_month_cost), amount = state.allCosts.ifBlank { "0" })
+                        FinancialSection(title = stringResource(R.string.debt_situation), amount = state.allOwe.ifBlank { "0" })
+                        FinancialSection(title = stringResource(R.string.all_fund), amount = state.allFunds.ifBlank { "0" })
+
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Funds",
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF6200EE)
+                                )
+                            )
+                            TextButton(
+                                onClick = { onAction(HomeIntent.OpenFound) },
+                                content = {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Text(
+                                            text = "All",
+                                            style = MaterialTheme.typography.titleMedium.copy(
+                                                fontWeight = FontWeight.Bold,
+                                                color = Color(0xFF448062) // Section Title Color
+                                            )
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Icon(
+                                            Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null,
+                                            tint = Color(0xFF448062)
+                                        )
+                                    }
+                                }
+                            )
+                        }
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            if (state.funds.isEmpty()) {
+                                item {
+                                    AddFundCardItem(onAction = onAction)
+                                }
+                            } else {
+                                items(state.funds) { saving ->
+                                    FundCardItem(data = saving)
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(24.dp))
+                        if (state.owes.isNotEmpty()) {
+                            Text(
+                                text = stringResource(R.string.must_payment_debt),
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF6200EE) // Section Title Color
+                                ),
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                items(state.owes) { debt ->
+                                    FinancialCardItem(data = debt)
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(24.dp))
+                        }
+                        Text(
+                            text = stringResource(R.string.today_cost),
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFF6200EE) // Section Title Color
-                            )
+                            ),
+                            modifier = Modifier.padding(bottom = 8.dp)
                         )
-                        TextButton(
-                            onClick = { onAction(HomeIntent.OpenFound) },
-                            content = {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text(
-
-                                        text = "All",
-                                        style = MaterialTheme.typography.titleMedium.copy(
-                                            fontWeight = FontWeight.Bold,
-                                            color = Color(0xFF6200EE) // Section Title Color
-                                        )
-                                    )
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
-                                }
-                            })
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        items(savingsList) { saving ->
-                            FinancialCardItem(name = saving)
-                        }
+                    items(state.costs) { expense ->
+                        FinancialSection(title = expense.type, amount = expense.amount.toString().ifBlank { "0" })
                     }
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    Text(
-                        text = "To'lanishi kerak bo'lgan qarzlar va kreditlar",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF6200EE) // Section Title Color
-                        ),
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        items(debtsList) { debt ->
-                            FinancialCardItem(name = debt)
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(24.dp))
-                    Text(
-                        text = "Bugungi xarajatlar",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF6200EE) // Section Title Color
-                        ),
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-                items(state.costs) { expense ->
-                    FinancialSection(title = expense.name, amount = expense.amount.toString().ifBlank { "0" })
                 }
             }
         }
-    }
-    if (state.isOpenDialog) {
-        CreateCostDialog(
-            onDismiss = {
-                onAction(HomeIntent.CloseDialog)
-            },
-            onAddItem = { name, money ->
-                onAction(HomeIntent.AddCost(money, name))
-            }
-        )
-    }
+    )
 }
 
 @Composable
@@ -245,33 +243,81 @@ fun FinancialSection(title: String, amount: String) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
+            .background(
+                Color(0xFFF5F5F5),
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(bottom = 16.dp)
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.bodyLarge.copy(
+            style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF000000) // Section Title Color
-            )
+                color = Color(0xFF000000), // Section Title Color
+                fontSize = 20.sp // Increased font size for the title
+            ),
+            modifier = Modifier.padding(bottom = 4.dp) // Spacing between title and amount
         )
         Text(
             text = amount,
-            style = MaterialTheme.typography.bodyMedium.copy(
+            style = MaterialTheme.typography.bodyLarge.copy(
                 color = Color.Gray,
-                fontSize = 14.sp // Change the font size for amount
+                fontSize = 18.sp // Increased font size for the amount
             )
         )
     }
 }
 
+
 @Composable
-fun FinancialCardItem(name: String) {
+private fun AddFundCardItem(onAction: (HomeIntent) -> Unit) {
+    Card(
+        modifier = Modifier
+            .height(80.dp)
+            .width(250.dp),
+        elevation = CardDefaults.cardElevation(2.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFFFFFFFF)
+        ),
+        onClick = { onAction(HomeIntent.OpenAddFound) }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add",
+                tint = Color(0xFF448062),
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "Add items",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color(0xFF448062)
+            )
+        }
+
+    }
+}
+
+@Composable
+private fun FundCardItem(data: FundData) {
     Card(
         modifier = Modifier
             .height(100.dp)
-            .width(200.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
-        shape = RoundedCornerShape(12.dp)
+            .width(250.dp),
+        elevation = CardDefaults.cardElevation(2.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFFFFFFFF)
+        )
     ) {
         Box(
             modifier = Modifier
@@ -280,12 +326,63 @@ fun FinancialCardItem(name: String) {
         ) {
             Column(verticalArrangement = Arrangement.Center) {
                 Text(
-                    text = name,
+                    text = data.name,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF000000) // Card Text Color
+                    color = Color(0xFF000000)
+                )
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = data.amount.toString(),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF000000)
                 )
             }
         }
     }
 }
+
+@Composable
+private fun FinancialCardItem(data: DebtOweData) {
+    Card(
+        modifier = Modifier
+            .height(200.dp)
+            .width(200.dp),
+        elevation = CardDefaults.cardElevation(2.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFFFFFFFF)
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Column(verticalArrangement = Arrangement.Center) {
+                Text(
+                    text = data.ownerName,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF000000)
+                )
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = data.amount.toString(),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF000000)
+                )
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = data.finalDate,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF444444)
+                )
+            }
+        }
+    }
+}
+

@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">My Finance</string>
+    <string name="last_month_cost">Last month\'s expenses</string>
+    <string name="debt_situation">Your debt status</string>
+    <string name="all_fund">Total fund balance</string>
+    <string name="must_payment_debt">Debts and credits to be paid</string>
+    <string name="today_cost">Today\'s expenses</string>
+
 </resources>

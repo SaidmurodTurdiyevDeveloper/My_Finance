@@ -1,6 +1,7 @@
 package us.smt.myfinance.ui.screen.cards.card_list
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,43 +31,56 @@ fun CreditCardItem(card: CreditCard) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            .padding(12.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF1E1E1E)
+        ),
+        elevation = CardDefaults.cardElevation(8.dp)
     ) {
         Row(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier
+                .padding(16.dp)
+                .background(Color(0xFF2A2A2A), shape = RoundedCornerShape(16.dp)),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
                 painter = painterResource(id = R.drawable.credit_card),
                 contentDescription = "Card Provider Logo",
-                modifier = Modifier.size(40.dp)
+                modifier = Modifier.size(50.dp)
             )
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(20.dp))
             Column {
                 Text(
                     text = card.cardHolderName,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        color = Color(0xFFD1D1D1),
+                        fontWeight = FontWeight.Bold
+                    )
                 )
                 Text(
                     text = card.cardNumber,
-                    style = MaterialTheme.typography.bodyMedium,
-                    letterSpacing = 1.5.sp
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = Color(0xFF9E9E9E),
+                        letterSpacing = 1.5.sp
+                    )
                 )
                 Text(
                     text = "Exp: ${card.expiryDate}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = Color(0xFF757575)
+                    )
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "Balance: ${card.money}",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = Color.Black
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = Color(0xFFFFD700),
+                        fontWeight = FontWeight.Bold
+                    )
                 )
             }
         }
     }
 }
+

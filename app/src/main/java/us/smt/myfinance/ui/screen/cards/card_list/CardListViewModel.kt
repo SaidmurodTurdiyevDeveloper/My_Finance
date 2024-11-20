@@ -11,21 +11,26 @@ import us.smt.myfinance.ui.utils.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class CardListViewModel @Inject constructor(appNavigator: AppNavigator, localStorage: LocalStorage) :
-    BaseViewModel<CardListState, CardListIntent>(initializeData = CardListState(), appNavigator = appNavigator) {
+class CardListViewModel @Inject constructor(
+    appNavigator: AppNavigator,
+    private val localStorage: LocalStorage
+) : BaseViewModel<CardListState, CardListIntent>(initializeData = CardListState(), appNavigator = appNavigator) {
 
-    init {
-        val gson = Gson()
-        val itemType = object : TypeToken<List<CreditCard>>() {}.type
-        val cards: List<CreditCard> = if (localStorage.cards.isEmpty()) emptyList() else gson.fromJson(localStorage.cards, itemType)
-        update(state = state.value.copy(creditCards = cards))
-    }
 
     override fun onAction(intent: CardListIntent) {
         when (intent) {
             CardListIntent.AddCard -> openAddCard()
             CardListIntent.Back -> back()
+            CardListIntent.LoadData -> loadList()
         }
+    }
+
+
+    private fun loadList() {
+        val gson = Gson()
+        val itemType = object : TypeToken<List<CreditCard>>() {}.type
+        val cards: List<CreditCard> = if (localStorage.cards.isEmpty()) emptyList() else gson.fromJson(localStorage.cards, itemType)
+        update(state = state.value.copy(creditCards = cards))
     }
 
     private fun openAddCard() {

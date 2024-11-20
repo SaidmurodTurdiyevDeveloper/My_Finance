@@ -19,6 +19,7 @@ class LocalStorage @Inject constructor(
     var password:String by StringPreference(sharedPreferences, "")
     var owes:String by StringPreference(sharedPreferences, "")
     var cards:String by StringPreference(sharedPreferences, "")
+    var funds:String by StringPreference(sharedPreferences, "")
     var debts:String by StringPreference(sharedPreferences, "")
     var costs:String by StringPreference(sharedPreferences, "")
 }
