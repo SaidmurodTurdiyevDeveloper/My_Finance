@@ -1,8 +1,13 @@
 package us.smt.myfinance.domen.model
 
+import us.smt.myfinance.ui.screen.home.create_cost.DailyExpenses
+
 data class CostData(
-    val timeMillisecond:String,
+    val id: String,
+    val timeMillisecond: String,
     val amount: Int,
-    val type: String,
-    val description:String
+    val imageRes: Int,
+    val name: String,
+    val type: DailyExpenses,
+    val description: String
 )

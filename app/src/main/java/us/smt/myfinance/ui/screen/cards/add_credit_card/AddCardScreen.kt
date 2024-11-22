@@ -18,10 +18,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -34,7 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
-import us.smt.myfinance.ui.utils.TextFieldData
+import us.smt.myfinance.ui.screen.cards.view.CreditCardNumberTextView
+import us.smt.myfinance.ui.screen.commpn.SimpleTextView
 
 class AddCardScreen : Screen {
     @Composable
@@ -75,7 +74,7 @@ private fun AddCardScreenContent(state: AddCardState, onAction: (AddCardIntent) 
                     .background(Color(0xFFF5F5F5)) // Light gray background for the whole screen
             ) {
                 // Card Number Input
-                SimpleTextView(
+                CreditCardNumberTextView(
                     hint = "Card Number",
                     state = state.cardNumber,
                     onChange = { cardNumber -> onAction(AddCardIntent.ChangeCardNumber(cardNumber)) },
@@ -85,22 +84,19 @@ private fun AddCardScreenContent(state: AddCardState, onAction: (AddCardIntent) 
                 SimpleTextView(
                     hint = "Cardholder Name",
                     state = state.cardHolderName,
-                    onChange = { cardHolderName -> onAction(AddCardIntent.ChangeCardHolderName(cardHolderName)) },
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black)
+                    onChange = { cardHolderName -> onAction(AddCardIntent.ChangeCardHolderName(cardHolderName)) }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 SimpleTextView(
                     hint = "Expiration Date",
                     state = state.expirationDate,
-                    onChange = { expirationDate -> onAction(AddCardIntent.ChangeExpirationDate(expirationDate)) },
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black)
+                    onChange = { expirationDate -> onAction(AddCardIntent.ChangeExpirationDate(expirationDate)) }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 SimpleTextView(
                     hint = "CVV",
                     state = state.cvv,
-                    onChange = { cvv -> onAction(AddCardIntent.ChangeCvv(cvv)) },
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black)
+                    onChange = { cvv -> onAction(AddCardIntent.ChangeCvv(cvv)) }
                 )
 
                 // Save Button
@@ -122,29 +118,6 @@ private fun AddCardScreenContent(state: AddCardState, onAction: (AddCardIntent) 
         }
     )
 }
-
-@Composable
-fun SimpleTextView(
-    hint: String,
-    state: TextFieldData,
-    onChange: (String) -> Unit,
-    textStyle: androidx.compose.ui.text.TextStyle
-) {
-    OutlinedTextField(
-        value = state.text,
-        onValueChange = onChange,
-        label = { Text(hint) },
-        modifier = Modifier.fillMaxWidth(),
-        textStyle = textStyle,
-        singleLine = true,
-        shape = RoundedCornerShape(12.dp),
-        colors = TextFieldDefaults.colors(
-            unfocusedLabelColor = Color.Gray,
-            cursorColor = Color(0xFF1E88E5)
-        )
-    )
-}
-
 
 @Preview(showBackground = true)
 @Composable

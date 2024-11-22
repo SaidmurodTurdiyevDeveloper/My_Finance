@@ -5,5 +5,7 @@
     <string name="all_fund">Total fund balance</string>
     <string name="must_payment_debt">Debts and credits to be paid</string>
     <string name="today_cost">Today\'s expenses</string>
+    <string name="all_owes">They are all owe</string>
+    <string name="all_debt">Your all debt</string>
 
 </resources>

@@ -9,6 +9,7 @@ import us.smt.myfinance.domen.model.FundData
 import us.smt.myfinance.ui.utils.AppNavigator
 import us.smt.myfinance.ui.utils.BaseViewModel
 import us.smt.myfinance.ui.utils.TextFieldData
+import us.smt.myfinance.util.TextViewError
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,7 +27,13 @@ class CreateFundViewModel @Inject constructor(
     }
 
     private fun addFund() {
-        if (state.value.cost.text.isEmpty() || state.value.name.text.isEmpty() || !state.value.cost.text.isDigitsOnly()) {
+        if (state.value.cost.text.isEmpty()) {
+            update(state = state.value.copy(cost = state.value.cost.copy(error = TextViewError.Empty)))
+            return
+        }
+
+        if (!state.value.cost.text.isDigitsOnly()) {
+            update(state = state.value.copy(cost = state.value.cost.copy(error = TextViewError.InvalidCharacter)))
             return
         }
         val gson = Gson()
@@ -49,7 +56,8 @@ class CreateFundViewModel @Inject constructor(
         update(
             state.value.copy(
                 cost = TextFieldData(
-                    text = amount
+                    text = amount,
+                    success = amount.isDigitsOnly()
                 )
             )
         )
@@ -59,7 +67,8 @@ class CreateFundViewModel @Inject constructor(
         update(
             state.value.copy(
                 name = TextFieldData(
-                    text = name
+                    text = name,
+                    success = name.isNotBlank()
                 )
             )
         )

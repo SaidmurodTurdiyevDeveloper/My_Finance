@@ -6,10 +6,14 @@ import us.smt.myfinance.domen.model.FundData
 
 data class HomeState(
     val balance: String = "",
-    val owes: List<DebtOweData> = emptyList(),
+    val allDebts: List<DebtOweData> = emptyList(),
+    val allOwes: List<DebtOweData> = emptyList(),
+    val isDeletingExpenseId: String? = null,
     val allOwe: String = "",
+    val allDebt: String = "",
     val funds: List<FundData> = emptyList(),
     val allFunds: String = "",
     val costs: List<CostData> = emptyList(),
+    val lastCosts: List<CostData> = emptyList(),
     val allCosts: String = ""
 )

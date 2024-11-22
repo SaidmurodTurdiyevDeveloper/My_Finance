@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import us.smt.myfinance.R
 import us.smt.myfinance.domen.model.CreditCard
+import us.smt.myfinance.util.toMoneyType
 
 @Composable
 fun CreditCardItem(card: CreditCard) {
@@ -52,14 +53,14 @@ fun CreditCardItem(card: CreditCard) {
             Spacer(modifier = Modifier.width(20.dp))
             Column {
                 Text(
-                    text = card.cardHolderName,
+                    text = card.cardNumber,
                     style = MaterialTheme.typography.titleLarge.copy(
                         color = Color(0xFFD1D1D1),
                         fontWeight = FontWeight.Bold
                     )
                 )
                 Text(
-                    text = card.cardNumber,
+                    text = card.cardHolderName,
                     style = MaterialTheme.typography.bodyLarge.copy(
                         color = Color(0xFF9E9E9E),
                         letterSpacing = 1.5.sp
@@ -73,7 +74,7 @@ fun CreditCardItem(card: CreditCard) {
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Balance: ${card.money}",
+                    text = "Balance: ${card.money.toString().toMoneyType()}",
                     style = MaterialTheme.typography.bodyLarge.copy(
                         color = Color(0xFFFFD700),
                         fontWeight = FontWeight.Bold

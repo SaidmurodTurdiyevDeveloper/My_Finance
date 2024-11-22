@@ -3,13 +3,13 @@ package us.smt.myfinance.ui.screen.auth.login
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -18,15 +18,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
-import us.smt.myfinance.ui.screen.auth.authentification.RegistrationIntent
 import us.smt.myfinance.ui.screen.auth.view.textview.LoginTextView
 import us.smt.myfinance.ui.screen.auth.view.textview.PassWordTextField
+import us.smt.myfinance.util.AuthError
 
 class LoginScreen : Screen {
     @Composable
@@ -92,6 +91,16 @@ private fun LoginPage(
                 }
             ) {
                 Text("Don't have an account? Register")
+            }
+            if (state.error != null) {
+                Spacer(Modifier.height(24.dp))
+                val message = when (state.error) {
+                    AuthError.UserNotRegister -> "You must register first"
+                    AuthError.UserNotFound -> "User not found"
+                    else -> "Error"
+                }
+                Text(message, color = MaterialTheme.colorScheme.error)
+
             }
         }
     }

@@ -25,7 +25,10 @@ class FundListViewModel @Inject constructor(
             FundListIntent.LoadData -> loadList()
             is FundListIntent.OpenAddFundMoneyDialog -> openAddMoneyDialog(id = intent.dataId)
             is FundListIntent.AddFundMoney -> addFundMoney(intent.dataId, intent.money)
-            FundListIntent.CloseDialog -> closeAddMoneyDialog()
+            FundListIntent.CloseAddMoneyDialog -> closeAddMoneyDialog()
+            FundListIntent.CloseDeleteMoneyDialog -> closeDeleteDialog()
+            FundListIntent.DeleteFund -> deleteFund()
+            is FundListIntent.OpenDeleteDialog -> openDeleteDialog(intent.dataId)
         }
     }
 
@@ -39,16 +42,32 @@ class FundListViewModel @Inject constructor(
                 it
             }
         }
-        update(state.value.copy(fundList = ls, isOpenDialog = null))
+        update(state.value.copy(fundList = ls, isOpenAddMoneyDialog = null))
+        localStorage.funds = Gson().toJson(ls)
+    }
+
+    private fun deleteFund() {
+        val ls = state.value.fundList.filter {
+            it.id != state.value.isOpenDeleteDialog
+        }
+        update(state.value.copy(fundList = ls, isOpenDeleteDialog = null))
         localStorage.funds = Gson().toJson(ls)
     }
 
     private fun openAddMoneyDialog(id: String) {
-        update(state.value.copy(isOpenDialog = id))
+        update(state.value.copy(isOpenAddMoneyDialog = id))
     }
 
     private fun closeAddMoneyDialog() {
-        update(state.value.copy(isOpenDialog = null))
+        update(state.value.copy(isOpenAddMoneyDialog = null))
+    }
+
+    private fun openDeleteDialog(id: String) {
+        update(state.value.copy(isOpenDeleteDialog = id))
+    }
+
+    private fun closeDeleteDialog() {
+        update(state.value.copy(isOpenDeleteDialog = null))
     }
 
     private fun loadList() {

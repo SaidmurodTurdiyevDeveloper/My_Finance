@@ -12,16 +12,16 @@ import us.smt.myfinance.ui.utils.AppNavigator
 import javax.inject.Inject
 
 @HiltViewModel
-class SplashViewModel @Inject constructor(navigator: AppNavigator, localStorage: LocalStorage) : ViewModel() {
-    init {
+class SplashViewModel @Inject constructor(private val navigator: AppNavigator, private val localStorage: LocalStorage) : ViewModel() {
+    fun start() {
         if (localStorage.isLogin) {
             viewModelScope.launch {
-                delay(1000)
+                delay(100)
                 navigator.replace(MainTabScreen())
             }
         } else {
             viewModelScope.launch {
-                delay(1000)
+                delay(100)
                 navigator.replace(LoginScreen())
             }
         }

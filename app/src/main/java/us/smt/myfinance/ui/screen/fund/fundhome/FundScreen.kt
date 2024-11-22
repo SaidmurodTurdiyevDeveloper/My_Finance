@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,28 +30,30 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
-import cafe.adriel.voyager.core.lifecycle.LifecycleEffectOnce
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import us.smt.myfinance.domen.model.FundData
 import us.smt.myfinance.ui.dialog.AddMoneyDialog
+import us.smt.myfinance.ui.dialog.DeleteDialog
+import us.smt.myfinance.ui.screen.home.home_tab.AnimatedPreloader
+import us.smt.myfinance.util.toMoneyType
 
 class FundScreen : Screen {
-    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
 
         val viewModel = getViewModel<FundListViewModel>()
         val state by viewModel.state.collectAsState()
-        LifecycleEffectOnce {
+        LaunchedEffect(key1 = Unit) {
             viewModel.onAction(FundListIntent.LoadData)
         }
         FundScreenContent(state = state, onAction = viewModel::onAction)
@@ -73,7 +77,7 @@ private fun FundScreenContent(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF448062), // Blue color for the app bar
+                    containerColor = Color(0xFF1E88E5), // Blue color for the app bar
                     titleContentColor = Color.White,
                     navigationIconContentColor = Color.White
                 )
@@ -82,7 +86,7 @@ private fun FundScreenContent(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { onAction(FundListIntent.AddFund) },
-                containerColor = Color(0xFF448062)
+                containerColor = Color(0xFF1E88E5)
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Fund", tint = Color.White)
             }
@@ -93,18 +97,46 @@ private fun FundScreenContent(
                     .fillMaxSize()
                     .padding(paddingValues),
                 contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(state.fundList) { data ->
-                    FundCardItem(data = data, onAction = onAction)
+                if (state.fundList.isEmpty()) {
+                    item {
+                        Spacer(modifier = Modifier.height(100.dp))
+                        Box(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp), contentAlignment = Alignment.Center
+                        ) {
+                            AnimatedPreloader(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp)
+                            )
+                        }
+                    }
+                } else {
+                    items(state.fundList) { data ->
+                        FundCardItem(data = data, onAction = onAction, delete = {
+                            onAction(FundListIntent.OpenDeleteDialog(dataId = data.id))
+                        })
+                    }
                 }
             }
+
         }
     )
 
-    if (!state.isOpenDialog.isNullOrBlank()) {
+    if (!state.isOpenAddMoneyDialog.isNullOrBlank()) {
         AddMoneyDialog(
-            onDismiss = { onAction(FundListIntent.CloseDialog) },
-            onAddItem = { onAction(FundListIntent.AddFundMoney(dataId = state.isOpenDialog, money = it)) }
+            onDismiss = { onAction(FundListIntent.CloseAddMoneyDialog) },
+            onAddItem = { onAction(FundListIntent.AddFundMoney(dataId = state.isOpenAddMoneyDialog, money = it)) }
+        )
+    }
+
+    if (!state.isOpenDeleteDialog.isNullOrBlank()) {
+        DeleteDialog(
+            onDismiss = { onAction(FundListIntent.CloseDeleteMoneyDialog) },
+            onDelete = { onAction(FundListIntent.DeleteFund) }
         )
     }
 }
@@ -113,7 +145,8 @@ private fun FundScreenContent(
 @Composable
 private fun FundCardItem(
     data: FundData,
-    onAction: (FundListIntent) -> Unit
+    onAction: (FundListIntent) -> Unit,
+    delete: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -128,12 +161,15 @@ private fun FundCardItem(
             onAction(FundListIntent.OpenAddFundMoneyDialog(dataId = data.id))
         }
     ) {
-        Box(
+        Row(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            Column(verticalArrangement = Arrangement.Center) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center
+            ) {
                 Text(
                     text = data.name,
                     fontSize = 16.sp,
@@ -142,12 +178,23 @@ private fun FundCardItem(
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    text = data.amount.toString(),
+                    text = data.amount.toMoneyType() + " $",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF000000)
                 )
             }
+
+            IconButton(
+                onClick = delete,
+                content = {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Go to details",
+                        tint = Color.Gray
+                    )
+                },
+            )
         }
     }
 }

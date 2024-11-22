@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -30,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import us.smt.myfinance.R
@@ -46,22 +47,26 @@ object PaymentTab : Tab {
 
     @Composable
     override fun Content() {
-        CommunalScreen()
+        val viewModel = getViewModel<PaymentListViewModel>()
+        CommunalScreen(
+            openScreen = viewModel::openPayment
+        )
     }
 }
 
 @Composable
-private fun CommunalScreen() {
-    // Updated list of payments in English
+private fun CommunalScreen(
+    openScreen: (index: Int) -> Unit
+) {
     val paymentsList = listOf(
-        "Electricity" to R.drawable.electr_energy,
-        "Internet Bills" to R.drawable.internet,
-        "Gas Bills" to R.drawable.gas,
-        "Water Bills" to R.drawable.water,
-        "Garbage Collection" to R.drawable.garbage,
-        "Heating" to R.drawable.heating,
-        "Television Subscription" to R.drawable.tv,
-        "Maintenance Fees" to R.drawable.maintenance
+        0 to R.drawable.electr_energy,
+        1 to R.drawable.internet,
+        2 to R.drawable.gas,
+        3 to R.drawable.water,
+        4 to R.drawable.garbage,
+        5 to R.drawable.heating,
+        6 to R.drawable.tv,
+        7 to R.drawable.maintenance
     )
 
     Column(
@@ -83,11 +88,11 @@ private fun CommunalScreen() {
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(paymentsList) { payment ->
+            itemsIndexed(paymentsList) { index, payment ->
                 CommunalItem(
                     payment = payment,
                     onClick = {
-                        // Action when item is clicked
+                        openScreen(index)
                     }
                 )
             }
@@ -95,8 +100,32 @@ private fun CommunalScreen() {
     }
 }
 
+fun getPaymentTitle(index: Int): String = when (index) {
+    0 -> "Electricity"
+    1 -> "Internet Bills"
+    2 -> "Gas Bills"
+    3 -> "Water Bills"
+    4 -> "Garbage Collection"
+    5 -> "Heating"
+    6 -> "Television Subscription"
+    7 -> "Maintenance Fees"
+    else -> ""
+}
+
+fun getPaymentResource(index: Int): Int = when (index) {
+    0 -> R.drawable.electr_energy
+    1 -> R.drawable.internet
+    2 -> R.drawable.gas
+    3 -> R.drawable.water
+    4 -> R.drawable.garbage
+    5 -> R.drawable.heating
+    6 -> R.drawable.tv
+    7 -> R.drawable.maintenance
+    else -> -1
+}
+
 @Composable
-fun CommunalItem(payment: Pair<String, Int>, onClick: () -> Unit) {
+fun CommunalItem(payment: Pair<Int, Int>, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -118,13 +147,13 @@ fun CommunalItem(payment: Pair<String, Int>, onClick: () -> Unit) {
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
                 painter = painterResource(payment.second),
-                contentDescription = payment.first
+                contentDescription = getPaymentTitle(payment.first)
             )
             Spacer(modifier = Modifier.width(16.dp))
 
             // Payment description
             Text(
-                text = payment.first,
+                text = getPaymentTitle(payment.first),
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onSurface

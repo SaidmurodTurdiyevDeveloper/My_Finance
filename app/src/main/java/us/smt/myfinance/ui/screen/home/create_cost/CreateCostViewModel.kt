@@ -9,6 +9,7 @@ import us.smt.myfinance.domen.model.CostData
 import us.smt.myfinance.ui.utils.AppNavigator
 import us.smt.myfinance.ui.utils.BaseViewModel
 import us.smt.myfinance.ui.utils.TextFieldData
+import us.smt.myfinance.util.TextViewError
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -22,15 +23,28 @@ class CreateCostViewModel @Inject constructor(
             CreateCostIntent.AddCost -> addCost()
             is CreateCostIntent.ChangeAmount -> changeAmount(intent.amount)
             is CreateCostIntent.ChangeDescription -> changeDescription(intent.description)
-            is CreateCostIntent.ChangeType -> changeType(intent.type)
+            is CreateCostIntent.ChangeName -> changeName(intent.type)
             CreateCostIntent.Back -> back()
+            is CreateCostIntent.ChangeType -> changeType(intent.type)
         }
     }
 
     private fun addCost() {
-        if (state.value.cost.text.isEmpty() || state.value.costType.text.isEmpty() || !state.value.cost.text.isDigitsOnly()) {
+        if (state.value.cost.text.isEmpty()) {
+            update(state = state.value.copy(cost = state.value.cost.copy(error = TextViewError.Empty)))
             return
         }
+
+        if (state.value.costType.text.isEmpty()) {
+            update(state = state.value.copy(costType = state.value.costType.copy(error = TextViewError.Empty)))
+            return
+        }
+
+        if (!state.value.cost.text.isDigitsOnly()) {
+            update(state = state.value.copy(cost = state.value.cost.copy(error = TextViewError.InvalidCharacter)))
+            return
+        }
+
         val gson = Gson()
         val itemType = object : TypeToken<List<CostData>>() {}.type
         val costs: List<CostData> = if (localStorage.costs.isEmpty()) emptyList() else gson.fromJson(localStorage.costs, itemType)
@@ -40,8 +54,11 @@ class CreateCostViewModel @Inject constructor(
             CostData(
                 amount = state.value.cost.text.toInt(),
                 description = state.value.description.text,
-                type = state.value.costType.text,
-                timeMillisecond = time.toString()
+                name = state.value.costType.text,
+                timeMillisecond = time.toString(),
+                type = state.value.type,
+                imageRes = -1,
+                id = ls.size.toString()
             )
         )
         localStorage.costs = gson.toJson(ls)
@@ -68,12 +85,20 @@ class CreateCostViewModel @Inject constructor(
         )
     }
 
-    private fun changeType(type: String) {
+    private fun changeName(type: String) {
         update(
             state.value.copy(
                 costType = TextFieldData(
                     text = type
                 )
+            )
+        )
+    }
+
+    private fun changeType(type: DailyExpenses) {
+        update(
+            state.value.copy(
+                type = type
             )
         )
     }

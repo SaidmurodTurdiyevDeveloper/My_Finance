@@ -27,7 +27,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import us.smt.myfinance.ui.screen.auth.view.textview.LoginTextView
 import us.smt.myfinance.ui.screen.auth.view.textview.PassWordTextField
-import us.smt.myfinance.ui.screen.auth.view.textview.SimpleTextView
+import us.smt.myfinance.ui.screen.commpn.SimpleTextView
 
 class RegistrationScreen : Screen {
     @Composable

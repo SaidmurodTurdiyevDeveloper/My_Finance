@@ -18,10 +18,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -33,7 +31,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
-import us.smt.myfinance.ui.utils.TextFieldData
+import us.smt.myfinance.ui.screen.commpn.SimpleTextNumberView
+import us.smt.myfinance.ui.screen.commpn.SimpleTextView
 
 class CreateFundScreen : Screen {
     @Composable
@@ -60,7 +59,7 @@ private fun CreateFundScreenContent(state: CreateFundState, onAction: (CreateFun
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF448062), // Blue color for the app bar
+                    containerColor = Color(0xFF1E88E5), // Blue color for the app bar
                     titleContentColor = Color.White,
                     navigationIconContentColor = Color.White
                 )
@@ -79,21 +78,19 @@ private fun CreateFundScreenContent(state: CreateFundState, onAction: (CreateFun
                 SimpleTextView(
                     hint = "Fund name",
                     state = state.name,
-                    onChange = { cardNumber -> onAction(CreateFundIntent.ChangeName(cardNumber)) },
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black)
+                    onChange = { cardNumber -> onAction(CreateFundIntent.ChangeName(cardNumber)) }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                SimpleTextView(
+                SimpleTextNumberView(
                     hint = "Fund amount",
                     state = state.cost,
-                    onChange = { cardHolderName -> onAction(CreateFundIntent.ChangeAmount(cardHolderName)) },
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black)
+                    onChange = { cardHolderName -> onAction(CreateFundIntent.ChangeAmount(cardHolderName)) }
                 )
 
                 // Save Button
                 Button(
                     onClick = { onAction(CreateFundIntent.AddFund) },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF448062)), // Blue color for the button
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1E88E5)), // Blue color for the button
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 16.dp)
@@ -110,24 +107,3 @@ private fun CreateFundScreenContent(state: CreateFundState, onAction: (CreateFun
     )
 }
 
-@Composable
-private fun SimpleTextView(
-    hint: String,
-    state: TextFieldData,
-    onChange: (String) -> Unit,
-    textStyle: androidx.compose.ui.text.TextStyle
-) {
-    OutlinedTextField(
-        value = state.text,
-        onValueChange = onChange,
-        label = { Text(hint) },
-        modifier = Modifier.fillMaxWidth(),
-        textStyle = textStyle,
-        singleLine = true,
-        shape = RoundedCornerShape(12.dp),
-        colors = TextFieldDefaults.colors(
-            unfocusedLabelColor = Color.Gray,
-            cursorColor = Color(0xFF448062)
-        )
-    )
-}

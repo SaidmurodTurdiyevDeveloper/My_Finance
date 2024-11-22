@@ -11,13 +11,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -68,27 +66,24 @@ private fun ProfileScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF5F5F5)) // Ochiq kul rang fon
-            .padding(top = 80.dp, bottom = 16.dp)
-            .verticalScroll(rememberScrollState()), // Sahifani skroll qilish imkoniyati
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(
+                top = 24.dp,
+                bottom = 16.dp
+            )
+            .verticalScroll(rememberScrollState())
     ) {
-        Icon(
-            imageVector = Icons.Default.Person,
-            contentDescription = "Profile Image",
-            modifier = Modifier
-                .size(120.dp)
-                .background(Color.Gray, CircleShape)
-                .padding(2.dp)
-                .background(Color(0xFF6200EE), CircleShape) // Profil tasvir atrofida ko'k rang
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
         Text(
+            modifier = Modifier.padding(start = 24.dp, top = 12.dp, bottom = 4.dp),
             text = "${state.name} ${state.surname}".ifBlank { "No Name" },
             fontSize = 28.sp, // Matnni kattalashtirdik
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF6200EE) // Ko'k rang
+            color = Color(0xFF3C0396) // Ko'k rang
+        )
+        Text(
+            modifier = Modifier.padding(horizontal = 24.dp),
+            text = state.login.ifBlank { "empty" },
+            fontSize = 22.sp,
+            color = Color(0xFFA063FC)
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -98,11 +93,9 @@ private fun ProfileScreen(
                 .weight(1f)
                 .background(Color.White)
                 .padding(16.dp)
-                .background(Color.White, RoundedCornerShape(8.dp)), // Rounded corners for the card
+                .background(Color.White, RoundedCornerShape(8.dp)),
             horizontalAlignment = Alignment.Start
         ) {
-            ActionItem(text = "Language", onClick = { onAction(SettingIntent.OpenLanguage) })
-            HorizontalDivider(thickness = 0.5.dp, color = Color.Gray)
             ActionItem(text = "About", onClick = { onAction(SettingIntent.OpenAbout) })
             HorizontalDivider(thickness = 0.5.dp, color = Color.Gray)
             ActionItem(text = "Help", onClick = { onAction(SettingIntent.OpenHelp) })
@@ -122,14 +115,14 @@ fun ActionItem(text: String, onClick: () -> Unit) {
     ) {
         Text(
             text = text,
-            fontSize = 18.sp, // Matnni kattalashtirdik
+            fontSize = 18.sp,
             color = Color.Black,
             fontWeight = FontWeight.Medium
         )
         Icon(
-            imageVector = Icons.Filled.KeyboardArrowRight,
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = "Next",
-            tint = Color(0xFF6200EE) // Ikon rangini ko'k qildik
+            tint = Color(0xFF6200EE)
         )
     }
 }

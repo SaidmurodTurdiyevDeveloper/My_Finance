@@ -70,7 +70,7 @@ dependencies {
 
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
-
+    implementation(libs.lottie.compose)
     implementation(libs.voyager.navigator)
     implementation(libs.voyager.screenmodel)
     implementation(libs.voyager.bottom.sheet.navigator)

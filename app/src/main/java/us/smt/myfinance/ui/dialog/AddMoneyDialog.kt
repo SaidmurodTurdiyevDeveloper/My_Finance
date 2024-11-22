@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.text.isDigitsOnly
 
 @Composable
 fun AddMoneyDialog(
@@ -21,6 +22,7 @@ fun AddMoneyDialog(
     onAddItem: (money: String) -> Unit
 ) {
     var money by remember { mutableStateOf("") }
+    var error by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -29,7 +31,11 @@ fun AddMoneyDialog(
             Column {
                 OutlinedTextField(
                     value = money,
-                    onValueChange = { money = it },
+                    onValueChange = {
+                        money = it
+                        error = false
+                    },
+                    isError = error,
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                     label = { Text("Money") }
                 )
@@ -38,8 +44,10 @@ fun AddMoneyDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    if (money.isNotBlank()) {
+                    if (money.isNotBlank() && money.isDigitsOnly()) {
                         onAddItem(money)
+                    } else {
+                        error = true
                     }
                 }
             ) {

@@ -2,7 +2,9 @@ package us.smt.myfinance.ui.screen.auth.view.textview
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -10,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import us.smt.myfinance.ui.utils.TextFieldData
+import us.smt.myfinance.util.getErrorText
 
 @Composable
 fun LoginTextView(state:TextFieldData,onChange:(String)->Unit) {
@@ -18,6 +21,16 @@ fun LoginTextView(state:TextFieldData,onChange:(String)->Unit) {
         value = state.text,
         onValueChange = onChange,
         label = { Text("Email") },
+        supportingText = {
+            if (state.error != null) {
+                val errorText = getErrorText(state.error)
+                Text(
+                    text = errorText,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+        },
+        shape = RoundedCornerShape(4.dp),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
         modifier = Modifier
             .fillMaxWidth()

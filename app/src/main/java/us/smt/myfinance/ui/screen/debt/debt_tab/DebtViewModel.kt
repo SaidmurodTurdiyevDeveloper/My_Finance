@@ -15,12 +15,30 @@ class DebtViewModel @Inject constructor(navigator: AppNavigator, private val loc
         when (intent) {
             is DebtIntent.AddDebt -> openDebtScreen(intent.debt)
             is DebtIntent.AddOwe -> openOweScreen(intent.owe)
-            DebtIntent.OpenDebt -> openDialog()
-            DebtIntent.CloseDebt -> closeDialog()
+            DebtIntent.OpenAddDebt -> openAddDialog()
+            is DebtIntent.OpenCompleteDebt -> openCompleteDialog(intent.id)
+            DebtIntent.CloseAddDebt -> closeAddDialog()
+            DebtIntent.CloseCompleteDebt -> closeCompleteDialog()
+            is DebtIntent.CompleteDept -> completeDebt(intent.isDebt)
         }
     }
 
     init {
+        loadList()
+    }
+
+    private fun completeDebt(isDebt: Boolean) {
+        if (isDebt) {
+            val ls = state.value.debts.filter { it.id != state.value.isOpenCompleteDialog }
+            update(state = state.value.copy(debts = ls, isOpenCompleteDialog = null))
+        } else {
+            val ls = state.value.owes.filter { it.id != state.value.isOpenCompleteDialog }
+            update(state = state.value.copy(owes = ls, isOpenCompleteDialog = null))
+        }
+        saveList()
+    }
+
+    private fun loadList() {
         val gson = Gson()
         val itemType = object : TypeToken<List<DebtOweData>>() {}.type
         val owes: List<DebtOweData> = if (localStorage.owes.isEmpty()) emptyList() else gson.fromJson(localStorage.owes, itemType)
@@ -28,25 +46,33 @@ class DebtViewModel @Inject constructor(navigator: AppNavigator, private val loc
         update(state = state.value.copy(debts = debts.toList(), owes = owes.toList()))
     }
 
-    private fun openDialog() {
-        update(state = state.value.copy(isOpenDialog = true))
+    private fun openAddDialog() {
+        update(state = state.value.copy(isOpenAddDialog = true))
     }
 
-    private fun closeDialog() {
-        update(state = state.value.copy(isOpenDialog = false))
+    private fun openCompleteDialog(id: String) {
+        update(state = state.value.copy(isOpenCompleteDialog = id))
+    }
+
+    private fun closeAddDialog() {
+        update(state = state.value.copy(isOpenAddDialog = false))
+    }
+
+    private fun closeCompleteDialog() {
+        update(state = state.value.copy(isOpenCompleteDialog = null))
     }
 
     private fun openDebtScreen(data: DebtOweData) {
         val ls = state.value.debts.toMutableList()
-        ls.add(data)
-        update(state = state.value.copy(debts = ls, isOpenDialog = false))
+        ls.add(data.copy(id = ls.size.toString()))
+        update(state = state.value.copy(debts = ls, isOpenAddDialog = false))
         saveList()
     }
 
     private fun openOweScreen(data: DebtOweData) {
         val ls = state.value.owes.toMutableList()
-        ls.add(data)
-        update(state = state.value.copy(owes = ls, isOpenDialog = false))
+        ls.add(data.copy(id = ls.size.toString()))
+        update(state = state.value.copy(owes = ls, isOpenAddDialog = false))
         saveList()
     }
 
