@@ -62,13 +62,18 @@ class HomeViewModel @Inject constructor(navigator: AppNavigator, private val loc
         val ls = state.value.costs.filter {
             it.id != state.value.isDeletingExpenseId
         }
+        val all = state.value.lastCosts.filter {
+            it.id != state.value.isDeletingExpenseId
+        }
         update(
             state.value.copy(
                 costs = ls,
+                lastCosts = all,
+                allCosts = all.sumOf { it.amount }.toString(),
                 isDeletingExpenseId = null
             )
         )
-        localStorage.costs = Gson().toJson(ls)
+        localStorage.costs = Gson().toJson(all)
     }
 
     private fun initData() {
