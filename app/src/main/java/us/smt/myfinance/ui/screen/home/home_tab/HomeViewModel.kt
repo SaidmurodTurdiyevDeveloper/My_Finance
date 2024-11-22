@@ -113,18 +113,25 @@ class HomeViewModel @Inject constructor(navigator: AppNavigator, private val loc
         val todayCost = costs.filter {
             it.timeMillisecond.toLong() > start
         }
+        if (
+            balance == state.value.balance
+            && costSum == state.value.allCosts.toInt()
+            && oweSum == state.value.allOwe.toInt()
+            && debtSum == state.value.allDebt.toInt()
+            && fundSum == state.value.allFunds.toInt()
+        ) return
         update(
             state = state.value.copy(
-                balance = balance.toString(),
+                balance = balance,
                 allOwe = oweSum.toString(),
                 allDebt = debtSum.toString(),
                 allFunds = fundSum.toString(),
+                allCosts = costSum.toString(),
                 costs = todayCost,
                 lastCosts = costs,
                 allDebts = debts,
                 allOwes = owes,
-                funds = funds,
-                allCosts = costSum.toString()
+                funds = funds
             )
         )
     }
@@ -149,6 +156,7 @@ class HomeViewModel @Inject constructor(navigator: AppNavigator, private val loc
                     )
                 )
             }
+
             1 -> {
                 val lsPie = state.value.funds.map {
                     StatisticData(
@@ -172,6 +180,7 @@ class HomeViewModel @Inject constructor(navigator: AppNavigator, private val loc
                     )
                 )
             }
+
             2 -> {
                 val lsBar = state.value.allOwes.map {
                     StatisticData(
@@ -187,6 +196,7 @@ class HomeViewModel @Inject constructor(navigator: AppNavigator, private val loc
                     )
                 )
             }
+
             3 -> {
                 val lsBar = state.value.allDebts.map {
                     StatisticData(

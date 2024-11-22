@@ -33,12 +33,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 
-object SettingTab : Tab {
-    private fun readResolve(): Any = SettingTab
+class SettingTab(private val viewModel: SettingViewModel) : Tab {
     override val options: TabOptions
         @Composable
         get() = TabOptions(
@@ -49,7 +47,6 @@ object SettingTab : Tab {
 
     @Composable
     override fun Content() {
-        val viewModel = getViewModel<SettingViewModel>()
         val state by viewModel.state.collectAsState()
         ProfileScreen(
             state = state, onAction = viewModel::onAction

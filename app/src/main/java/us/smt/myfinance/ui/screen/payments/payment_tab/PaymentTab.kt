@@ -30,13 +30,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import us.smt.myfinance.R
 
-object PaymentTab : Tab {
-    private fun readResolve(): Any = PaymentTab
+class PaymentTab(private val viewModel: PaymentListViewModel) : Tab {
     override val options: TabOptions
         @Composable
         get() = TabOptions(
@@ -47,7 +45,6 @@ object PaymentTab : Tab {
 
     @Composable
     override fun Content() {
-        val viewModel = getViewModel<PaymentListViewModel>()
         CommunalScreen(
             openScreen = viewModel::openPayment
         )

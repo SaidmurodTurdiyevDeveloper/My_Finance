@@ -1,5 +1,7 @@
 package us.smt.myfinance.ui.screen.fund.fundhome
 
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -36,11 +39,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
+import us.smt.myfinance.R
 import us.smt.myfinance.domen.model.FundData
 import us.smt.myfinance.ui.dialog.AddMoneyDialog
 import us.smt.myfinance.ui.dialog.DeleteDialog
@@ -80,7 +85,10 @@ private fun FundScreenContent(
                     containerColor = Color(0xFF1E88E5), // Blue color for the app bar
                     titleContentColor = Color.White,
                     navigationIconContentColor = Color.White
-                )
+                ),
+                actions = {
+                    TotalText(state = state)
+                }
             )
         },
         floatingActionButton = {
@@ -141,6 +149,30 @@ private fun FundScreenContent(
     }
 }
 
+@Composable
+private fun TotalText(
+    state: FundState
+) {
+    val animatedValue by animateIntAsState(state.total, label = "")
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Image(
+            painter = painterResource(id = R.drawable.coin),
+            contentDescription = null,
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = animatedValue.toString().toMoneyType(),
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            modifier = Modifier
+                .padding(end = 16.dp)
+        )
+
+    }
+
+}
 
 @Composable
 private fun FundCardItem(

@@ -24,19 +24,36 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import us.smt.myfinance.ui.screen.debt.debt_tab.DebtTab
+import us.smt.myfinance.ui.screen.debt.debt_tab.DebtViewModel
 import us.smt.myfinance.ui.screen.home.home_tab.HomeTab
+import us.smt.myfinance.ui.screen.home.home_tab.HomeViewModel
+import us.smt.myfinance.ui.screen.payments.payment_tab.PaymentListViewModel
 import us.smt.myfinance.ui.screen.payments.payment_tab.PaymentTab
 import us.smt.myfinance.ui.screen.setting.setting_tab.SettingTab
+import us.smt.myfinance.ui.screen.setting.setting_tab.SettingViewModel
 
 class MainTabScreen : Screen {
     @Composable
     override fun Content() {
-        TabNavigator(HomeTab) {
+        val homeViewModel = getViewModel<HomeViewModel>()
+        val debtViewModel = getViewModel<DebtViewModel>()
+        val paymentListViewModel = getViewModel<PaymentListViewModel>()
+        val settingViewModel = getViewModel<SettingViewModel>()
+        val list = remember {
+            listOf(
+                HomeTab(viewModel = homeViewModel),
+                DebtTab(viewModel = debtViewModel),
+                PaymentTab(viewModel = paymentListViewModel),
+                SettingTab(viewModel = settingViewModel)
+            )
+        }
+        TabNavigator(list.first()) {
             Scaffold(
                 content = { padding ->
                     Surface(modifier = Modifier.padding(padding)) {
@@ -45,7 +62,7 @@ class MainTabScreen : Screen {
                 },
                 bottomBar = {
                     BottomNavigation(
-                        list = listOf(HomeTab, DebtTab, PaymentTab, SettingTab)
+                        list = list
                     )
                 }
             )

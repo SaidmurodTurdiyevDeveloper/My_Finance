@@ -73,7 +73,7 @@ internal fun PieChart(
                             x.toFloat(),
                             y.toFloat(),
                             android.graphics.Paint().apply {
-                                color = android.graphics.Color.RED
+                                color = android.graphics.Color.BLACK
                                 textAlign = android.graphics.Paint.Align.CENTER
                                 textSize = 40f // Adjust text size as needed
                             }

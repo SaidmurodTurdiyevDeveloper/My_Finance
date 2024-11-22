@@ -118,7 +118,7 @@ class StatisticScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(text = it.title + " - " + it.value + "$", style = MaterialTheme.typography.labelSmall)
+                                Text(text = it.title + " - " + it.value.toLong() + " $", style = MaterialTheme.typography.labelSmall)
                                 Box(
                                     Modifier
                                         .size(18.dp)

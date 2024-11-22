@@ -1,6 +1,7 @@
 package us.smt.myfinance.ui.screen.home.home_tab
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -42,6 +43,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,7 +57,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.airbnb.lottie.compose.LottieAnimation
@@ -68,8 +69,7 @@ import us.smt.myfinance.domen.model.FundData
 import us.smt.myfinance.ui.dialog.DeleteDialog
 import us.smt.myfinance.util.toMoneyType
 
-object HomeTab : Tab {
-    private fun readResolve(): Any = HomeTab
+class HomeTab(private val viewModel: HomeViewModel) : Tab {
     override val options: TabOptions
         @Composable
         get() = TabOptions(
@@ -80,14 +80,13 @@ object HomeTab : Tab {
 
     @Composable
     override fun Content() {
-        val viewmodel = getViewModel<HomeViewModel>()
-        val state by viewmodel.state.collectAsState()
+        val state by viewModel.state.collectAsState()
         LaunchedEffect(key1 = Unit) {
-            viewmodel.onAction(HomeIntent.Init)
+            viewModel.onAction(HomeIntent.Init)
         }
         PaymentHomeScreen(
             state = state,
-            onAction = viewmodel::onAction
+            onAction = viewModel::onAction
         )
     }
 }
@@ -144,12 +143,7 @@ private fun PaymentHomeScreen(
                         .padding(24.dp)
                 ) {
                     Column(horizontalAlignment = Alignment.Start) {
-                        Text(
-                            text = state.balance.ifBlank { "0" }.toMoneyType() + " $",
-                            color = Color.White,
-                            fontSize = 32.sp,
-                            fontWeight = FontWeight.Bold
-                        )
+                        TotalCostText(state = state)
                         Text(
                             text = "Cards All Balance",
                             color = Color.White.copy(alpha = 0.7f),
@@ -318,6 +312,26 @@ private fun PaymentHomeScreen(
             onAction(HomeIntent.DeleteExpense)
         }
     }
+}
+
+@Composable
+private fun TotalCostText(
+    state: HomeState
+) {
+    val totalCost = remember(key1 = state.balance) {
+        mutableIntStateOf(state.balance)
+    }
+    val animatedValue by animateIntAsState(totalCost.intValue, label = "")
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            text = animatedValue.toString().toMoneyType() + " $",
+            color = Color.White,
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+    }
+
 }
 
 @Composable

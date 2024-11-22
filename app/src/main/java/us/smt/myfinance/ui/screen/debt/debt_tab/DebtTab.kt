@@ -42,7 +42,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.isDigitsOnly
-import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import us.smt.myfinance.R
@@ -52,8 +51,7 @@ import us.smt.myfinance.ui.dialog.CreateDebtOweDialog
 import us.smt.myfinance.ui.screen.home.home_tab.AnimatedPreloader
 import us.smt.myfinance.util.toMoneyType
 
-object DebtTab : Tab {
-    private fun readResolve(): Any = DebtTab
+class DebtTab(private val viewModel: DebtViewModel) : Tab {
     override val options: TabOptions
         @Composable
         get() = TabOptions(
@@ -64,7 +62,6 @@ object DebtTab : Tab {
 
     @Composable
     override fun Content() {
-        val viewModel = getViewModel<DebtViewModel>()
         val state by viewModel.state.collectAsState()
         DebtOweScreen(
             state = state,

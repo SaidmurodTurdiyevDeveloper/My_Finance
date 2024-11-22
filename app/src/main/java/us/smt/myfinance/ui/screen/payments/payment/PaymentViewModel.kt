@@ -12,6 +12,7 @@ import us.smt.myfinance.ui.screen.payments.payment_tab.getPaymentTitle
 import us.smt.myfinance.ui.screen.sms.SmsConfirmScreen
 import us.smt.myfinance.ui.utils.AppNavigator
 import us.smt.myfinance.ui.utils.BaseViewModel
+import us.smt.myfinance.ui.utils.TextFieldData
 import us.smt.myfinance.util.TextViewError
 import java.util.Calendar
 import javax.inject.Inject
@@ -22,22 +23,21 @@ class PaymentViewModel @Inject constructor(
     private val localStorage: LocalStorage
 ) : BaseViewModel<PaymentState, PaymentIntent>(initializeData = PaymentState(), appNavigator = navigator) {
 
-    // Handle different intents
     override fun onAction(intent: PaymentIntent) {
         when (intent) {
             is PaymentIntent.ChangeCode -> {
-                update(state = state.value.copy(code = state.value.code.copy(text = intent.code)))
+                update(state = state.value.copy(code = TextFieldData(text = intent.code)))
             }
 
             is PaymentIntent.ChangeAmount -> {
                 update(
-                    state = state.value.copy(amount = state.value.amount.copy(text = intent.amount))
+                    state = state.value.copy(amount = TextFieldData(text = intent.amount))
                 )
             }
 
             is PaymentIntent.ChangeComment -> {
                 update(
-                    state = state.value.copy(comment = state.value.comment.copy(text = intent.comment))
+                    state = state.value.copy(comment = TextFieldData(text = intent.comment))
                 )
             }
 

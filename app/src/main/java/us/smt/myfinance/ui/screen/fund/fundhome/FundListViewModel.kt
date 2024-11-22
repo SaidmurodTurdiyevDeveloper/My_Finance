@@ -74,7 +74,7 @@ class FundListViewModel @Inject constructor(
         val gson = Gson()
         val itemType = object : TypeToken<List<FundData>>() {}.type
         val funds: List<FundData> = if (localStorage.funds.isEmpty()) emptyList() else gson.fromJson(localStorage.funds, itemType)
-        update(state = state.value.copy(fundList = funds))
+        update(state = state.value.copy(fundList = funds, total = funds.sumOf { it.amount.toInt() }))
     }
 
     private fun openAddFund() {
