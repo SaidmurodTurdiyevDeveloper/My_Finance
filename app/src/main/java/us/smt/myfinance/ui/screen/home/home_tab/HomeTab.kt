@@ -145,7 +145,7 @@ private fun PaymentHomeScreen(
                 ) {
                     Column(horizontalAlignment = Alignment.Start) {
                         Text(
-                            text = state.balance.ifBlank { "0" }.toMoneyType()+" $",
+                            text = state.balance.ifBlank { "0" }.toMoneyType() + " $",
                             color = Color.White,
                             fontSize = 32.sp,
                             fontWeight = FontWeight.Bold
@@ -261,7 +261,9 @@ private fun PaymentHomeScreen(
                                 }
                             } else {
                                 items(state.funds) { saving ->
-                                    FundCardItem(data = saving)
+                                    FundCardItem(data = saving, onClick = {
+                                        onAction(HomeIntent.OpenFound)
+                                    })
                                 }
                             }
                         }
@@ -503,7 +505,10 @@ private fun AddFundCardItem(onAction: (HomeIntent) -> Unit) {
 }
 
 @Composable
-private fun FundCardItem(data: FundData) {
+private fun FundCardItem(
+    data: FundData,
+    onClick: () -> Unit
+) {
     Card(
         modifier = Modifier
             .height(100.dp)
@@ -512,14 +517,19 @@ private fun FundCardItem(data: FundData) {
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color(0xFFFFFFFF)
-        )
+        ),
+        onClick = onClick
     ) {
-        Box(
+        Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(verticalArrangement = Arrangement.Center) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center
+            ) {
                 Text(
                     text = data.name,
                     fontSize = 16.sp,
@@ -528,12 +538,17 @@ private fun FundCardItem(data: FundData) {
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    text = data.amount.toMoneyType()+" $",
+                    text = data.amount.toMoneyType() + " $",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF000000)
                 )
             }
+            Image(
+                modifier = Modifier.size(36.dp),
+                painter = painterResource(R.drawable.coin),
+                contentDescription = "Coin"
+            )
         }
     }
 }

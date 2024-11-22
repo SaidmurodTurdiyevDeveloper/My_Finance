@@ -1,5 +1,8 @@
 package us.smt.myfinance.ui.screen.setting.help
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,8 +27,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 
@@ -40,6 +45,7 @@ class HelpScreen : Screen {
 @Composable
 fun HelpScreenContent() {
     val navigator = LocalNavigator.current
+    val context = LocalContext.current
     Scaffold(
         topBar = {
             TopAppBar(
@@ -62,7 +68,9 @@ fun HelpScreenContent() {
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { /* TODO: Navigate to contact support */ }) {
+            FloatingActionButton(onClick = {
+                openEmailClient(context = context, "")
+            }) {
                 Icon(imageVector = Icons.Default.Email, contentDescription = "Contact Support")
             }
         }
@@ -98,13 +106,18 @@ fun HelpScreenContent() {
 
 @Composable
 fun HelpTopicsList(topics: List<String>) {
+    val context = LocalContext.current
     LazyColumn {
         items(topics) { topic ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
-                    .clickable { /* TODO: Navigate to topic details */ },
+                    .clickable {
+                        openEmailClient(
+                            context, topic
+                        )
+                    },
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
                 Text(
@@ -116,6 +129,25 @@ fun HelpTopicsList(topics: List<String>) {
                 )
             }
         }
+    }
+}
+
+private fun openEmailClient(
+    context: Context,
+    topic: String
+) {
+    val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+        data = Uri.parse("mailto:") // Only email apps should handle this
+        putExtra(Intent.EXTRA_EMAIL, arrayOf("shakhzodamirsodiqova@gmail.com")) // Set recipient
+        putExtra(Intent.EXTRA_SUBJECT, topic.ifBlank { "Help" })
+        putExtra(Intent.EXTRA_TEXT, "Help me")
+    }
+    try {
+        startActivity(
+            context, emailIntent, null
+        )
+    } catch (e: Exception) {
+        e.printStackTrace()
     }
 }
 
