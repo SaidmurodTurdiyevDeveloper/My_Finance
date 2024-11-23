@@ -7,8 +7,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Icon
@@ -73,7 +77,7 @@ class MainTabScreen : Screen {
 
 @Composable
 private fun BottomNavigation(list: List<Tab>) {
-    Row {
+    Row(modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)) {
         list.forEach {
             TabNavigationItem(it)
         }
@@ -97,10 +101,10 @@ private fun RowScope.TabNavigationItem(tab: Tab) {
     ) {
         Icon(
             painter = tab.options.icon ?: rememberVectorPainter(Icons.Default.Info),
-            tint = if (tabNavigator.current == tab) Color(0xFF03A9F4) else Color.Gray,
+            tint = if (tabNavigator.current.options.index == tab.options.index) Color(0xFF03A9F4) else Color.Gray,
             contentDescription = tab.options.title
         )
         Spacer(Modifier.height(4.dp))
-        Text(text = tab.options.title, color = if (tabNavigator.current == tab) Color(0xFF03A9F4) else Color.Gray)
+        Text(text = tab.options.title, color = if (tabNavigator.current.options.index == tab.options.index) Color(0xFF03A9F4) else Color.Gray)
     }
 }
