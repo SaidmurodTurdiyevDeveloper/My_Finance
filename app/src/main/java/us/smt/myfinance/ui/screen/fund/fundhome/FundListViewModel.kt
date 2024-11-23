@@ -50,7 +50,7 @@ class FundListViewModel @Inject constructor(
         val ls = state.value.fundList.filter {
             it.id != state.value.isOpenDeleteDialog
         }
-        update(state.value.copy(fundList = ls, isOpenDeleteDialog = null))
+        update(state.value.copy(fundList = ls, isOpenDeleteDialog = null, total = ls.sumOf { it.amount.toInt() }))
         localStorage.funds = Gson().toJson(ls)
     }
 
