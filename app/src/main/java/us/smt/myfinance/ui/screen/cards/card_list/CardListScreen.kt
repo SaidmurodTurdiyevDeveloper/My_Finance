@@ -108,12 +108,12 @@ private fun CreditCardListScreen(
                             Box(
                                 Modifier
                                     .fillMaxWidth()
-                                    .padding(32.dp), contentAlignment = Alignment.Center
+                                    .padding(32.dp),
+                                contentAlignment = Alignment.Center
                             ) {
                                 AnimatedPreloader(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(200.dp)
                                 )
                             }
                         }
@@ -122,7 +122,9 @@ private fun CreditCardListScreen(
                             CreditCardItem(card = card)
                         }
                     }
-
+                    item {
+                        Spacer(modifier = Modifier.height(80.dp))
+                    }
                 }
             }
         }

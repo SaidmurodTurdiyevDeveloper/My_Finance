@@ -104,7 +104,7 @@ private fun FundScreenContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues),
-                contentPadding = PaddingValues(16.dp),
+                contentPadding = PaddingValues(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 80.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 if (state.fundList.isEmpty()) {
@@ -118,7 +118,6 @@ private fun FundScreenContent(
                             AnimatedPreloader(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(200.dp)
                             )
                         }
                     }

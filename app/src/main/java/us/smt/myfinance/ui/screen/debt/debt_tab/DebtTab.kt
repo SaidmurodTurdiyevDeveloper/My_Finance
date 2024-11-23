@@ -206,7 +206,6 @@ private fun DebtList(debts: List<DebtOweData>, onAction: (DebtIntent) -> Unit) {
                         AnimatedPreloader(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(200.dp)
                         )
                     }
                 }
@@ -219,6 +218,9 @@ private fun DebtList(debts: List<DebtOweData>, onAction: (DebtIntent) -> Unit) {
                         }
                     )
                 }
+            }
+            item {
+                Spacer(modifier = Modifier.height(80.dp))
             }
 
         }
@@ -253,7 +255,6 @@ private fun OweList(owes: List<DebtOweData>, onAction: (DebtIntent) -> Unit) {
                         AnimatedPreloader(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(200.dp)
                         )
                     }
                 }
@@ -266,6 +267,9 @@ private fun OweList(owes: List<DebtOweData>, onAction: (DebtIntent) -> Unit) {
                         }
                     )
                 }
+            }
+            item {
+                Spacer(modifier = Modifier.height(80.dp))
             }
 
         }

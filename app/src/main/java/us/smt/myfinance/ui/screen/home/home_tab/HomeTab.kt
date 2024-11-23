@@ -101,8 +101,7 @@ private fun PaymentHomeScreen(
             FloatingActionButton(
                 onClick = { onAction(HomeIntent.OpenAddCost) },
                 containerColor = Color(0xFF1E88E5),
-                contentColor = Color.White,
-                modifier = Modifier.padding(16.dp)
+                contentColor = Color.White
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Expense")
             }
@@ -156,7 +155,10 @@ private fun PaymentHomeScreen(
 
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = PaddingValues(vertical = 16.dp)
+                    contentPadding = PaddingValues(
+                        top = 16.dp,
+                        bottom = 80.dp
+                    )
                 ) {
                     item {
                         LazyRow(
@@ -282,7 +284,6 @@ private fun PaymentHomeScreen(
                                 AnimatedPreloader(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(200.dp)
                                 )
                             }
                         }
@@ -402,6 +403,7 @@ fun AnimatedPreloader(modifier: Modifier = Modifier) {
             R.raw.lottie_empty
         )
     )
+    val height = LocalConfiguration.current.screenWidthDp - 80
 
     val preloaderProgress by animateLottieCompositionAsState(
         preloaderLottieComposition,
@@ -411,10 +413,9 @@ fun AnimatedPreloader(modifier: Modifier = Modifier) {
 
 
     LottieAnimation(
-
         composition = preloaderLottieComposition,
         progress = preloaderProgress,
-        modifier = modifier
+        modifier = modifier.height(height.dp)
     )
 }
 
