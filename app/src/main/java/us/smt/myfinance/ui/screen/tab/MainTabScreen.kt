@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
@@ -58,8 +59,11 @@ class MainTabScreen : Screen {
         }
         TabNavigator(list.first()) {
             Scaffold(
+                contentWindowInsets = WindowInsets(0, 0, 0, 0),
                 content = { padding ->
-                    Surface(modifier = Modifier.padding(padding)) {
+                    Surface(modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding)) {
                         CurrentTab()
                     }
                 },
@@ -88,6 +92,7 @@ private fun RowScope.TabNavigationItem(tab: Tab) {
     val tabNavigator = LocalTabNavigator.current
     Column(
         modifier = Modifier
+            .height(56.dp)
             .weight(1f)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
@@ -104,6 +109,9 @@ private fun RowScope.TabNavigationItem(tab: Tab) {
             contentDescription = tab.options.title
         )
         Spacer(Modifier.height(4.dp))
-        Text(text = tab.options.title, color = if (tabNavigator.current.options.index == tab.options.index) Color(0xFF03A9F4) else Color.Gray)
+        Text(
+            text = tab.options.title,
+            color = if (tabNavigator.current.options.index == tab.options.index) Color(0xFF03A9F4) else Color.Gray
+        )
     }
 }
